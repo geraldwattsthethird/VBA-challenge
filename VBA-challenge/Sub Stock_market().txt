@@ -1,0 +1,80 @@
+Sub Stock_market()
+    
+    'Declare Variable as Worksheet
+    Dim ws As Worksheet
+    
+    'Establish For Each for every Worksheet
+    For Each ws In Worksheets
+    
+    'Input title for each value
+    ws.Range("I1").Value = "Ticker"
+    ws.Range("J1").Value = "Yearly Change"
+    ws.Range("K1").Value = "Percent Change"
+    ws.Range("L1").Value = "Total Stock Volume"
+    
+    'Declare Variables
+    Dim ticker As String
+    Dim Ticker_Counts As Integer
+    Dim open_price As Double
+    Dim close_price As Double
+    Dim yearly_change As Double
+    Dim percent_change As Double
+    Dim total_stock As Double
+    Dim Lastrow As Long
+    Dim i As Long
+    Dim Row As Long
+    Row = 1
+    
+    'Declare Lastrow as each row that has a value from the end of the page
+    Lastrow = Cells(Rows.Count, 1).End(xlUp).Row
+    'Value i starts on row 2
+    For i = 2 To Lastrow
+        'Give ticker the starting value
+        ticker = Cells(i, 1).Value
+        'Start open_price at 0 and start the value
+        If open_price = 0 Then
+            open_price = Cells(i, 3).Value
+        
+        End If
+        'Loop each value that doesn't match ticker
+        If Cells(i + 1, 1).Value <> ticker Then
+            Ticker_Counts = Ticker_Counts + 1
+            Cells(Ticker_Counts + 1, "I") = ticker
+        'Declare close_price as value from column 6
+        close_price = Cells(i, 6).Value
+        'Declare yearly_change as output for column J
+        yearly_change = close_price - open_price
+        Cells(Ticker_Counts + 1, "J").Value = yearly_change
+        'Input colors based on If Else statements
+        If yearly_change > 0 Then
+            Cells(Ticker_Counts + 1, "J").Interior.ColorIndex = 4
+        ElseIf yearly_change < 0 Then
+            Cells(Ticker_Counts + 1, "J").Interior.ColorIndex = 3
+        Else
+            Cells(Ticker_Counts + 1, "J").Interior.ColorIndex = 6
+        
+        End If
+        'Declare open_price start point and percent_change formula
+        If open_price = 0 Then
+            percent_change = 0
+        Else
+            percent_change = (yearly_change / open_price)
+            
+        End If
+        'Output for percent_change for Column K
+        Cells(Ticker_Counts + 1, "K").Value = Format(percent_change, "Percent")
+        'Reset open_price to 0 in loop
+        open_price = 0
+        'Declare total_stock output for Column L
+        total_stock = total_stock + Cells(i, 7).Value
+        Cells(Ticker_Counts + 1, "L").Value = total_stock
+        'Reset total_stock to 0 in loop
+        total_stock = 0
+        
+        End If
+    
+    Next i
+    
+    Next ws
+    
+End Sub
